@@ -10,6 +10,6 @@ RUN apt-get update && apt-get install -y \
 RUN echo "Image Docker buildée avec succès" > /build-success.txt
 
 # Afficher des infos au démarrage
-CMD echo "🎉 Image: $IMAGE_NAME | Tag: $IMAGE_TAG" && \
-    echo "📅 Build date: $(date)" && \
+CMD echo " Image: $IMAGE_NAME | Tag: $IMAGE_TAG" && \
+    echo " Build date: $(date)" && \
     cat /build-success.txt

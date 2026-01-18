@@ -20,11 +20,11 @@ jobs:
       
       - name: Vérifier les fichiers
         run: |
-          echo "📁 Contenu du répertoire :"
+          echo " Contenu du répertoire :"
           ls -la
           echo ""
           echo "📄 Contenu du Dockerfile :"
-          cat Dockerfile || echo "❌ Dockerfile non trouvé !"
+          cat Dockerfile || echo " Dockerfile non trouvé !"
 
       - name: Connexion à Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
