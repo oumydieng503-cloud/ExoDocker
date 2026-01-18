@@ -19,33 +19,37 @@ jobs:
       
       - name: Afficher les fichiers
         run: |
-          echo " Liste des fichiers :"
+          echo "📁 Liste des fichiers :"
           ls -la
           echo ""
           if [ -f "Dockerfile" ]; then
-            echo " Dockerfile trouvé !"
+            echo "✅ Dockerfile trouvé !"
             cat Dockerfile
           else
-            echo " ERREUR : Dockerfile non trouvé !"
+            echo "❌ ERREUR : Dockerfile non trouvé !"
             exit 1
           fi
 
       - name: Connexion à Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
-             -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+          -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          echo "✅ Connecté à Docker Hub en tant que: ${{ secrets.DOCKERHUB_USERNAME }}"
 
       - name: Build de l'image Docker
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$IMAGE_TAG .
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest .
+          echo "✅ Build des images terminé !"
 
       - name: Vérifier les images
         run: |
-          echo " Images Docker créées :"
+          echo "📦 Images Docker créées :"
           docker images | grep "${{ secrets.DOCKERHUB_USERNAME }}"
 
       - name: Push de l'image Docker
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$IMAGE_TAG
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
-          echo " Images poussées sur Docker Hub !"
+          echo "✅ Images poussées sur Docker Hub !"
+          echo "🌐 Disponible sur: https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME"
