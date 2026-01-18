@@ -1,0 +1,51 @@
+name: CI Docker Build & Push
+
+on:
+  push:
+    branches:
+      - lab-docker
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: mon-app-docker
+      IMAGE_TAG: 1.0.0
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+      
+      - name: Afficher les fichiers
+        run: |
+          echo " Liste des fichiers :"
+          ls -la
+          echo ""
+          if [ -f "Dockerfile" ]; then
+            echo " Dockerfile trouvé !"
+            cat Dockerfile
+          else
+            echo " ERREUR : Dockerfile non trouvé !"
+            exit 1
+          fi
+
+      - name: Connexion à Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+             -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build de l'image Docker
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$IMAGE_TAG .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest .
+
+      - name: Vérifier les images
+        run: |
+          echo " Images Docker créées :"
+          docker images | grep "${{ secrets.DOCKERHUB_USERNAME }}"
+
+      - name: Push de l'image Docker
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:$IMAGE_TAG
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
+          echo " Images poussées sur Docker Hub !"
